@@ -1,10 +1,9 @@
 #include <experimental/coroutine>
 #include <assert.h>
-#include <iostream>
-#include <string>
+#include <numeric>
 
 namespace Coroutines {
-	class Printer
+	class Summator
 	{
 	private:
 		class Promise
@@ -17,21 +16,25 @@ namespace Coroutines {
 			auto get_return_object() { return CoroHandle::from_promise(*this); }
 			auto initial_suspend() const { return suspend_always{}; }
 			auto final_suspend() const { return suspend_always{}; }
-			void return_void() const { }
 			void unhandled_exception() const { std::terminate(); }
+			void return_value(std::int64_t sum) { this->sum = sum; }
+
+			auto result() const { return sum; }
+		private:
+			std::int64_t sum = 0;
 		};
 		using CoroHandle = std::experimental::coroutine_handle<Promise>;
 
 	public:
 		using promise_type = Promise;
 
-		Printer(CoroHandle&& handle) : coro_handle(std::move(handle)) { assert(coro_handle); }
-		Printer(Printer&&) = default;
-		Printer(const Printer&) = delete;
-		~Printer() { coro_handle.destroy(); }
+		Summator(CoroHandle&& handle) : coro_handle(std::move(handle)) { assert(coro_handle); }
+		Summator(Summator&&) = default;
+		Summator(const Summator&) = delete;
+		~Summator() { coro_handle.destroy(); }
 
-		Printer& operator=(Printer&&) = default;
-		Printer& operator=(const Printer&) = delete;
+		Summator& operator=(Summator&&) = default;
+		Summator& operator=(const Summator&) = delete;
 
 		bool resume() {
 			if (!coro_handle.done()) {
@@ -40,18 +43,24 @@ namespace Coroutines {
 			return !coro_handle.done();
 		}
 
+		auto result() const { return coro_handle.promise().result(); }
+
 	private:
 		CoroHandle coro_handle;
 	};
 
-	auto print_line(std::string message) -> Printer {
+	//take range by value since it may die
+	//before the coroutine is resumed
+	template <typename Range>
+	auto sum(Range range) -> Summator {
 		//initial suspend happens here
 
-		//message is printed when the coroutine is resumed
-		std::cout << message << std::endl;
-		
+		//coroutine is resumed here
+		const auto result = std::accumulate(range.cbegin(), range.cend(), 0);
+
 		//after co_return, the coroutine reaches the final suspend point
 		//which means it is done but not finished
-		co_return;
+		//and result is stored in its promise
+		co_return result;
 	}
 }

@@ -19,14 +19,14 @@ namespace Coroutines {
 
 		public:
 			auto get_return_object() { return CoroHandle::from_promise(*this); }
-			auto initial_suspend() { return suspend_always{}; }
-			auto final_suspend() { return suspend_always{}; }
+			auto initial_suspend() const { return suspend_always{}; }
+			auto final_suspend() const { return suspend_always{}; }
 			auto yield_value(T value) {
 				this->value = value;
 				return suspend_always{};
 			}
-			void unhandled_exception() { std::terminate(); }
-			const auto& current_value() { return value; }
+			void unhandled_exception() const { std::terminate(); }
+			const auto& current_value() const { return value; }
 
 		private:
 			T value = 0;
@@ -49,7 +49,7 @@ namespace Coroutines {
 			}
 			return !coro_handle.done();
 		}
-		const auto& current_value() { return coro_handle.promise().current_value(); }
+		const auto& current_value() const { return coro_handle.promise().current_value(); }
 
 	private:
 		CoroHandle coro_handle;
