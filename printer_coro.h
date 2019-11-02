@@ -49,7 +49,7 @@ namespace Coroutines {
 
 		//message is printed when the coroutine is resumed
 		std::cout << message << std::endl;
-		
+
 		//after co_return, the coroutine reaches the final suspend point
 		//which means it is done but not finished
 		co_return;

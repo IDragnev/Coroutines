@@ -12,7 +12,7 @@ int main()
 	//coroutines created, but not active yet
 	auto nats = Coroutines::nats();
 	auto print_nats_ended = Coroutines::print_line("...nats ended!");
-	
+
 	auto nums = std::vector<std::uint32_t>{};
 	//let's activate them
 	while (nats.resume()) {
@@ -24,10 +24,10 @@ int main()
 		}
 	}
 	//nats is still resumable here, as it is a generator
-	
+
 	print_nats_ended.resume();
 	//here print_nats_ended is done and not resumable anymore
-	
+
 	//create a Summator coroutine
 	auto summator = Coroutines::sum(nums);
 	//summator is suspended here

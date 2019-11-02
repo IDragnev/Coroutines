@@ -7,7 +7,7 @@ namespace Coroutines {
 	{
 	private:
 		static_assert(std::is_default_constructible_v<T>, "Generator<T> requires T to be default constructible");
-		
+
 		class Promise;
 		using CoroHandle = std::experimental::coroutine_handle<Promise>;
 
@@ -64,7 +64,7 @@ namespace Coroutines {
 			}
 		};
 	};
-	
+
 	inline constexpr auto increment = [](auto x) { return ++x; };
 	const auto from = [](auto initial) {
 		return make_generator(std::move(initial), increment);
