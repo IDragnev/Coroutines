@@ -29,7 +29,7 @@ namespace Coroutines {
 			const auto& current_value() const { return value; }
 
 		private:
-			T value = 0;
+			T value;
 		};
 
 	public:
@@ -59,15 +59,15 @@ namespace Coroutines {
 		return [initial_value, f]() -> Generator<decltype(initial_value)> {
 			auto value = initial_value;
 			while (true) {
-				co_yield value;
-				value = f(value);
+				co_yield std::move(value);
+				value = f(std::move(value));
 			}
 		};
 	};
 
 	inline constexpr auto increment = [](auto x) { return ++x; };
-	const auto from = [](auto initial) {
+	inline const auto from = [](auto initial) {
 		return make_generator(std::move(initial), increment);
 	};
-	const auto nats = from(0u);
+	inline const auto nats = from(0u);
 }
