@@ -1,3 +1,5 @@
+#pragma once
+
 #include <experimental/coroutine>
 #include <assert.h>
 #include <numeric>

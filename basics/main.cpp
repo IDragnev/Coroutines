@@ -3,9 +3,9 @@
 #include <assert.h>
 #include <vector>
 
-#include "generator.h"
-#include "printer_coro.h"
-#include "summator_coroutine.h"
+#include "generator.hpp"
+#include "printer_coro.hpp"
+#include "summator_coroutine.hpp"
 
 int main()
 {
